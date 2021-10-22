@@ -37,7 +37,10 @@ export default new Vuex.Store({
   mutations: {
     setTopicError(state) {
       state.error = ERRORS.NO_ACTION_FOR_TOPIC;
-      console.log(ERRORS.NO_ACTION_FOR_TOPIC);
+
+      if (config.debug) {
+        console.log(ERRORS.NO_ACTION_FOR_TOPIC);
+      }
     },
   },
 

@@ -17,4 +17,5 @@ export default {
   apiServicePrefix,
   apiPath,
   clientStatusTopic,
+  debug: true,
 };
