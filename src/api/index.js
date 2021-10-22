@@ -17,7 +17,7 @@ class MqttMessageParser {
     const [
       baseTopic,
       mqttClient,
-      direction,
+      method,
       endpoint,
       dataFormat,
     ] = topic.match(`^${config.apiServicePrefix}/(\\w+)/RES/(\\w+)/(.+)/(\\w+)$`);
@@ -25,7 +25,7 @@ class MqttMessageParser {
     this.topic = baseTopic;
     this.payload = payload;
     this.mqttClient = mqttClient;
-    this.direction = direction;
+    this.method = method;
     this.endpoint = endpoint;
     this.dataFormat = dataFormat;
     this.resultCode = this.payload.resultCode;
@@ -33,7 +33,9 @@ class MqttMessageParser {
     this.data = this.payload?.data;
     this.error = this.payload?.error;
 
-    this.storeAction = `${endpoints.STORE_MODULES[this.endpoint]}/${this.direction}/RES/${this.endpoint}`;
+    this.storeModule = endpoints.STORE_MODULES[this.endpoint];
+
+    this.storeAction = `${this.storeModule}/${this.method}/RES/${this.endpoint}`;
   }
 }
 
@@ -67,11 +69,18 @@ function receiveMessage(topic, payload, store) {
     payload: JSON.parse(payload.toString()),
   });
 
-  store.dispatch(
-    parsedMqttMessage.storeAction,
-    parsedMqttMessage.data,
-    { root: true },
-  );
+  const { storeModule, storeAction } = parsedMqttMessage;
+
+  // Проверка наличия экшена для топика
+  if (typeof storeModule !== 'undefined') {
+    store.dispatch(
+      storeAction,
+      parsedMqttMessage.data,
+      { root: true },
+    );
+  } else {
+    store.dispatch('onTopicError');
+  }
 }
 
 export {

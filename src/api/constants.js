@@ -31,3 +31,13 @@ export const METHODS = {
 export const DATA_FORMATS = {
   JSON: 'json',
 };
+
+/**
+ * Ошибки
+ *
+ * @readonly
+ * @enum {String}
+ */
+export const ERRORS = {
+  NO_ACTION_FOR_TOPIC: 'Отсутствует экшн для топика',
+};
